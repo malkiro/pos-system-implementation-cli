@@ -6,7 +6,10 @@ import java.util.Scanner;
 
 public class AppInitializer {
     //==========Database area========= (access all around the project)
-    static String[][] users = new String[3][2];
+    static String[][] users = new String[3][2]; //email, password
+    static String[][] customers = new String[100][4]; // nic, name, address, salary
+    static String[][] items = new String[100][4]; // code, description, qtyOnHand, unitPrice
+    static String[][] orders = new String[100][5]; // date, orderId, customer, total, item
     // step 1 ==> create a new array and it's length = users.length+???
     // step 2 ==> for loop copy users array to the new array
     // that created new array assign to the users reference
@@ -14,6 +17,13 @@ public class AppInitializer {
     //==========Database area=========
 
     public static void main(String[] args) {
+        // just for our testing process
+        items[0][0] = "001";
+        items[0][1] = "Desc 1";
+        items[0][2] = "15";
+        items[0][3] = "250";
+        // just for our testing process
+
         Scanner input = new Scanner(System.in);
         boolean exitState=false;
 
@@ -123,10 +133,290 @@ public class AppInitializer {
     // ---> register process
 
     // <--- dashboard process
-    public static void openDashboard(){
-        System.out.println("inside the dashboard");
+    public static void openDashboard() {
+        Scanner input = new Scanner(System.in);
+        String dashboardQuestions[]={
+                "1) Customer Management",
+                "2) Item Management",
+                "3) Order Management",
+                "4) Logout"
+        };
+        while (true){
+            for (String question:dashboardQuestions) {
+                System.out.println(question);
+            }
+            int userInput= input.nextInt();
+
+            switch (userInput){
+                case 1:
+                    customerManagement();
+                    break;
+                case 2:
+                    //itemManagement(); [code, description, qtyOnHand --> (int), unitPrice --> (double)]
+                    break;
+                case 3:
+                    placeNewOrder();
+                    break;
+                case 4: break;
+                default: return;
+            }
+        }
     }
     // ---> dashboard process
+
+
+    // <--- ===================== customer process =============================
+    public static void customerManagement(){
+        Scanner input = new Scanner(System.in);
+        String customerQuestions[]={
+                "1) Save Customer",
+                "2) Find Customer",
+                "3) Update Customer",
+                "4) Delete Customer",
+                "5) Find All Customers",
+                "6) Back to Home"
+        };
+
+        while (true){
+            for(String question: customerQuestions){
+                System.out.println(question);
+            }
+            int userInput= input.nextInt();
+            switch (userInput){
+                case 1:
+                    saveCustomer();
+                    break;
+                case 2:
+                    findCustomer();
+                    break;
+                case 3:
+                    updateCustomer();
+                    break;
+                case 4:
+                    deleteCustomer();
+                    break;
+                case 5:
+                    printAllCustomers();
+                    break;
+                case 6:
+                    return;
+                default:
+                    return;
+            }
+        }
+    }
+
+    // <--- save customer
+    public static void saveCustomer() {
+        Scanner input = new Scanner(System.in);
+        while (true) {
+            String nic, name, address;
+            double salary;
+            System.out.println("Insert Customer NIC");
+            nic = input.nextLine();
+            System.out.println("Insert Customer Name");
+            name = input.nextLine();
+            System.out.println("Insert Customer Address");
+            address = input.nextLine();
+            System.out.println("Insert Customer Salary");
+            salary = input.nextDouble();
+            //=========================
+            customerForLoop:
+            for (int i = 0; i < customers.length; i++) {
+                if (customers[i][0] != null) {
+                    if (customers[i][0].equals(nic)) {
+                        System.out.println("Customer Already Exists!");
+                        break; //break customerForLoop;
+                    }
+                }else{
+                    customers[i][0] = nic;
+                    customers[i][1] = name;
+                    customers[i][2] = address;
+                    customers[i][3] = String.valueOf(salary); // string <= double ()
+                    //====================
+                    System.out.println("Customer Saved!\n");
+                    System.out.println("1) Do you want to add an another customer?");
+                    System.out.println("2) Back to Main Menu");
+                    int option = input.nextInt();
+                    switch (option) {
+                        case 1:
+                            break customerForLoop;
+                        case 2:
+                            return;
+                        default:
+                            return;
+                    }
+                }
+            }
+        }
+    }
+    // ---> save customer
+
+    // ---> find customer
+    public static void findCustomer(){
+        Scanner input = new Scanner(System.in);
+        System.out.println("Insert Nic");
+        String nic= input.nextLine();
+        // foreach (can use)
+        for (int i = 0; i < customers.length; i++) {
+            if (customers[i][0]!=null){
+                if (customers[i][0].equals(nic)){
+                    System.out.println("==================Customer===========");
+                    System.out.println("Nic : "+customers[i][0]);
+                    System.out.println("Name : "+customers[i][1]);
+                    System.out.println("Address : "+customers[i][2]);
+                    System.out.println("Salary : "+customers[i][3]);
+                    System.out.println("==================Customer===========");
+                    return;
+                }
+            }
+        }
+        System.out.println("Customer Not Found");
+    }
+    // <--- find customer
+
+    // ---> update customer
+    public static void updateCustomer(){
+        Scanner input = new Scanner(System.in);
+        System.out.println("Insert Nic to find the customer");
+        String nic= input.nextLine();
+        for (int i = 0; i < customers.length; i++) {
+            if (customers[i][0]!=null){
+                if (customers[i][0].equals(nic)){
+                    //===========Update
+                    String  newName, newAddress;
+                    double newSalary;
+                    System.out.println("Insert Customer Name to update");
+                    newName = input.nextLine();
+                    System.out.println("Insert Customer Address to update");
+                    newAddress = input.nextLine();
+                    System.out.println("Insert Customer Salary to update");
+                    newSalary = input.nextDouble();
+
+                    customers[i][1]=newName;
+                    customers[i][2]=newAddress;
+                    customers[i][3]=String.valueOf(newSalary);
+                    System.out.println("Customer Updated!");
+                    //===========Update
+                    return;
+                }
+            }
+        }
+        System.out.println("Customer Not Found");
+    }
+    // <--- update customer
+
+    // ---> delete customer
+    public static void deleteCustomer() {
+        Scanner input = new Scanner(System.in);
+        System.out.println("Insert Nic");
+        String nic = input.nextLine();
+        // foreach (can use)
+        for (int i = 0; i < customers.length; i++) {
+            if (customers[i][0] != null) {
+                if (customers[i][0].equals(nic)) {
+                    customers[i][0] = null;
+                    customers[i][1] = null;
+                    customers[i][2] = null;
+                    customers[i][3] = null;
+                    System.out.println("Customer Deleted!");
+                    return;
+                }
+            }
+        }
+        System.out.println("Customer Not Found");
+    }
+    // <--- delete customer
+
+    // ---> print all customers
+    public static void printAllCustomers() {
+        for (int i = 0; i < customers.length; i++) {
+            if (customers[i][0] != null) { //null values ena rows enne nathi karanna
+                System.out.println("Nic: " + customers[i][0] + "\tName: " + customers[i][1] + "\tAddress: " + customers[i][2] + "\tSalary: " + customers[i][3]);
+            } else {
+                return;
+            }
+        }
+    }
+    // <--- print all customers
+
+    // ---> ===================== customer process =============================
+
+
+    // <--- ===================== order process =============================
+    public static void placeNewOrder() {
+        Scanner input = new Scanner(System.in);
+        System.out.println("Insert Customer Nic");
+        String nic = input.nextLine();
+
+        String name, address;
+        double salary;
+
+        //=============01. Customer find=======
+        for (int i = 0; i < customers.length; i++) {
+            if (customers[i][0] != null) {
+                if (customers[i][0].equals(nic)) {
+                    System.out.println("==================Customer===========");
+                    name = customers[i][1];
+                    address = customers[i][2];
+                    salary = Double.parseDouble(customers[i][3]); //[string<=double], [double<=string]** [Double== wrapper class]
+                    System.out.println("==================Customer===========");
+                }
+            }
+        }
+        //=============Customer find=======
+
+
+        //============= 02. Item find=======
+        System.out.println("Insert Item Code");
+        String code = input.nextLine();
+
+        String description;
+        double unitPrice=0;
+        int qtyOnHand;
+
+
+        for (int i = 0; i < items.length; i++) {
+            if (items[i][0] != null) {
+                if (items[i][0].equals(code)) {
+                    System.out.println("==================Item===========");
+                    description = items[i][1];
+                    qtyOnHand = Integer.parseInt(items[i][2]); // integer <= string // boxing vs unboxing
+                    unitPrice = Double.parseDouble(items[i][3]); //[string<=double], [double<=string]** [Double== wrapper class]
+                    System.out.println("==================Item===========");
+                }
+            }
+        }
+        //=============Item find=======
+
+        //============= 03. order place=======
+        System.out.println("Insert Order Code");
+        String orderId = input.nextLine();
+
+
+        for (int i = 0; i < orders.length; i++) {
+            if (orders[i][0]!=null){
+                if (orders[i][0].equals(orderId)){
+                    System.out.println("Order id exists");
+                    return;
+                }else{
+                    Date date= new Date();
+                    SimpleDateFormat f= new SimpleDateFormat("yyyy-MM-dd");
+                    String selectedDate = f.format(date);
+                    orders[i][0]=orderId;
+                    orders[i][1]=nic;
+                    orders[i][2]=code;
+                    orders[i][3]=selectedDate;
+                    orders[i][4]=String.valueOf(unitPrice);
+                }
+            }
+        }
+        System.out.println("Order Completed!");
+        //=============order place=======
+    }
+
+    // ---> ===================== order process =============================
+
 
     public static void printUi(String position){
         Date date = new Date(); // util,sql*******Don't //
